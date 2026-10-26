@@ -2,6 +2,10 @@
 
 [![hexlet-check](https://github.com/VasylP0/java-project-99/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/VasylP0/java-project-99/actions)
 
+### Live Demo
+
+[Task Manager on Render](https://java-project-99-caik.onrender.com/welcome)
+
 На практике узнаете про проектирование баз данных, связи между сущностями, PaaS, ORM, мониторинг ошибок, Swagger, фреймворк Spring.
 
 Учебный проект Хекслета: https://ru.hexlet.io/programs/java

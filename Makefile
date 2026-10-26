@@ -1,11 +1,13 @@
+.PHONY: setup build test run
+
 setup:
 	./gradlew clean build
 
 build:
 	./gradlew build
 
-run:
-	./gradlew bootRun
-
 test:
 	./gradlew test
+
+run:
+	./gradlew bootRun

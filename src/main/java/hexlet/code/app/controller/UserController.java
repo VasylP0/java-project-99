@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,8 +35,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> index() {
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> index() {
+        List<User> users = userRepository.findAll();
+
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(users.size()))
+                .body(users);
     }
     @PostMapping
     public User create(@RequestBody User user) {
@@ -64,19 +69,26 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id,
+    public User delete(@PathVariable Long id,
                        Authentication authentication) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
 
-        if (!user.getEmail().equals(authentication.getName())) {
+        User currentUser = userRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not found"));
+
+        if (!currentUser.isAdmin()
+                && !user.getEmail().equals(authentication.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "Access denied");
         }
 
         userRepository.delete(user);
+        return user;
     }
 
 }

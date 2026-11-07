@@ -73,6 +73,7 @@ public class TaskStatusController {
             );
         }
     }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
@@ -81,6 +82,15 @@ public class TaskStatusController {
                         HttpStatus.NOT_FOUND, "Task status not found"
                 ));
 
-        repository.delete(taskStatus);
+        try {
+            repository.delete(taskStatus);
+            repository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Cannot delete a task status that is used by a task",
+                    e
+            );
+        }
     }
 }

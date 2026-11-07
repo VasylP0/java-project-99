@@ -27,10 +27,12 @@ public class DataInitializer {
 
             if (userRepository.findByEmail(email).isEmpty()) {
                 User admin = new User();
+
                 admin.setFirstName("Admin");
                 admin.setLastName("User");
                 admin.setEmail(email);
                 admin.setPassword(passwordEncoder.encode(password));
+                admin.setAdmin(true);
 
                 userRepository.save(admin);
             }

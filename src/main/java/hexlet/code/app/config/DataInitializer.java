@@ -2,7 +2,10 @@
 package hexlet.code.app.config;
 
 import hexlet.code.app.model.User;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.repository.LabelRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +17,7 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initAdmin(
             UserRepository userRepository,
+            LabelRepository labelRepository,
             PasswordEncoder passwordEncoder) {
 
         return args -> {
@@ -35,6 +39,18 @@ public class DataInitializer {
                 admin.setAdmin(true);
 
                 userRepository.save(admin);
+            }
+
+            if (!labelRepository.existsByName("feature")) {
+                Label feature = new Label();
+                feature.setName("feature");
+                labelRepository.save(feature);
+            }
+
+            if (!labelRepository.existsByName("bug")) {
+                Label bug = new Label();
+                bug.setName("bug");
+                labelRepository.save(bug);
             }
         };
     }

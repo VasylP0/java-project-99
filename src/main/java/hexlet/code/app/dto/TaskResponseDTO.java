@@ -6,6 +6,11 @@ import hexlet.code.app.model.Task;
 
 import java.time.LocalDateTime;
 
+import hexlet.code.app.model.Label;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
 public class TaskResponseDTO {
 
     private Long id;
@@ -19,6 +24,9 @@ public class TaskResponseDTO {
     private String content;
     private String status;
 
+    private Set<Long> labels;
+
+
     public TaskResponseDTO(Task task) {
         this.id = task.getId();
         this.index = task.getIndex();
@@ -30,6 +38,12 @@ public class TaskResponseDTO {
         this.title = task.getName();
         this.content = task.getDescription();
         this.status = task.getTaskStatus().getSlug();
+
+        this.labels = task.getLabels()
+                .stream()
+                .map(Label::getId)
+                .collect(Collectors.toSet());
+
     }
 
     public Long getId() {
@@ -59,4 +73,9 @@ public class TaskResponseDTO {
     public String getStatus() {
         return status;
     }
+
+    public Set<Long> getLabels() {
+        return labels;
+    }
+
 }

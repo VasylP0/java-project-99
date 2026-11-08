@@ -18,6 +18,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+import hexlet.code.app.model.Label;
+import hexlet.code.app.repository.LabelRepository;
+
+import java.util.Set;
+import java.util.HashSet;
+import hexlet.code.app.repository.LabelRepository;
+
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -25,15 +33,38 @@ public class TaskController {
     private final TaskRepository taskRepository;
     private final TaskStatusRepository taskStatusRepository;
     private final UserRepository userRepository;
+    private final LabelRepository labelRepository;
+
 
     public TaskController(
             TaskRepository taskRepository,
             TaskStatusRepository taskStatusRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            LabelRepository labelRepository) {
+
         this.taskRepository = taskRepository;
         this.taskStatusRepository = taskStatusRepository;
         this.userRepository = userRepository;
+        this.labelRepository = labelRepository;
     }
+
+    private Set<Label> resolveLabels(Set<Long> labelIds) {
+
+        Set<Label> labels = new HashSet<>();
+
+        for (Long labelId : labelIds) {
+            Label label = labelRepository.findById(labelId)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid label ID: " + labelId
+                    ));
+
+            labels.add(label);
+        }
+
+        return labels;
+    }
+
 
     @GetMapping
     public List<TaskResponseDTO> index() {
@@ -77,6 +108,10 @@ public class TaskController {
             task.setAssignee(assignee);
         }
 
+        if (dto.getLabels() != null) {
+            task.setLabels(resolveLabels(dto.getLabels()));
+        }
+
         return new TaskResponseDTO(taskRepository.save(task));
     }
 
@@ -117,6 +152,10 @@ public class TaskController {
                             HttpStatus.BAD_REQUEST, "Invalid assignee"));
 
             task.setAssignee(assignee);
+        }
+
+        if (dto.getLabels() != null) {
+            task.setLabels(resolveLabels(dto.getLabels()));
         }
 
         return new TaskResponseDTO(taskRepository.save(task));

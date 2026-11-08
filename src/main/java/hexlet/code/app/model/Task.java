@@ -7,6 +7,10 @@ import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
+import java.util.HashSet;
+import java.util.Set;
+
+
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -32,6 +36,15 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "task_status_id", nullable = false)
     private TaskStatus taskStatus;
+
+    @ManyToMany
+    @JoinTable(
+            name = "task_labels",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private Set<Label> labels = new HashSet<>();
+
 
     @ManyToOne
     @JoinColumn(name = "assignee_id")
@@ -89,4 +102,11 @@ public class Task {
         return createdAt;
     }
 
+    public Set<Label> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<Label> labels) {
+        this.labels = labels;
+    }
 }

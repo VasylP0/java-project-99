@@ -1,5 +1,12 @@
+
 package hexlet.code.app.controller;
 
+import hexlet.code.app.dto.TaskCreateDTO;
+import hexlet.code.app.dto.TaskResponseDTO;
+import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
@@ -7,19 +14,13 @@ import hexlet.code.app.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import hexlet.code.app.dto.TaskCreateDTO;
-import hexlet.code.app.dto.TaskResponseDTO;
-import hexlet.code.app.model.Task;
-import hexlet.code.app.model.TaskStatus;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import hexlet.code.app.dto.TaskUpdateDTO;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class TaskControllerTest {
 
@@ -34,14 +35,19 @@ class TaskControllerTest {
         UserRepository userRepository =
                 Mockito.mock(UserRepository.class);
 
+        LabelRepository labelRepository =
+                Mockito.mock(LabelRepository.class);
+
         TaskController controller = new TaskController(
                 taskRepository,
                 statusRepository,
-                userRepository
+                userRepository,
+                labelRepository
         );
 
         assertTrue(controller.index().isEmpty());
     }
+
     @Test
     void testCreate() {
         TaskRepository taskRepository =
@@ -53,10 +59,14 @@ class TaskControllerTest {
         UserRepository userRepository =
                 Mockito.mock(UserRepository.class);
 
+        LabelRepository labelRepository =
+                Mockito.mock(LabelRepository.class);
+
         TaskController controller = new TaskController(
                 taskRepository,
                 statusRepository,
-                userRepository
+                userRepository,
+                labelRepository
         );
 
         TaskStatus status = new TaskStatus();
@@ -79,6 +89,7 @@ class TaskControllerTest {
         assertEquals("Test description", result.getContent());
         assertEquals("new", result.getStatus());
     }
+
     @Test
     void testShow() {
         TaskRepository taskRepository =
@@ -90,10 +101,14 @@ class TaskControllerTest {
         UserRepository userRepository =
                 Mockito.mock(UserRepository.class);
 
+        LabelRepository labelRepository =
+                Mockito.mock(LabelRepository.class);
+
         TaskController controller = new TaskController(
                 taskRepository,
                 statusRepository,
-                userRepository
+                userRepository,
+                labelRepository
         );
 
         TaskStatus status = new TaskStatus();
@@ -113,6 +128,7 @@ class TaskControllerTest {
         assertEquals("My description", result.getContent());
         assertEquals("new", result.getStatus());
     }
+
     @Test
     void testUpdate() {
         TaskRepository taskRepository =
@@ -124,10 +140,14 @@ class TaskControllerTest {
         UserRepository userRepository =
                 Mockito.mock(UserRepository.class);
 
+        LabelRepository labelRepository =
+                Mockito.mock(LabelRepository.class);
+
         TaskController controller = new TaskController(
                 taskRepository,
                 statusRepository,
-                userRepository
+                userRepository,
+                labelRepository
         );
 
         TaskStatus status = new TaskStatus();
@@ -153,6 +173,7 @@ class TaskControllerTest {
         assertEquals("Old description", result.getContent());
         assertEquals("new", result.getStatus());
     }
+
     @Test
     void testDelete() {
         TaskRepository taskRepository =
@@ -164,10 +185,14 @@ class TaskControllerTest {
         UserRepository userRepository =
                 Mockito.mock(UserRepository.class);
 
+        LabelRepository labelRepository =
+                Mockito.mock(LabelRepository.class);
+
         TaskController controller = new TaskController(
                 taskRepository,
                 statusRepository,
-                userRepository
+                userRepository,
+                labelRepository
         );
 
         Task task = new Task();

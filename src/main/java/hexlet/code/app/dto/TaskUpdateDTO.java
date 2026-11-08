@@ -3,6 +3,8 @@ package hexlet.code.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Set;
+
 public class TaskUpdateDTO {
 
     private String title;
@@ -12,6 +14,9 @@ public class TaskUpdateDTO {
 
     @JsonProperty("assignee_id")
     private Long assigneeId;
+
+    private Set<Long> labels;
+
 
     public String getTitle() {
         return title;
@@ -51,5 +56,13 @@ public class TaskUpdateDTO {
 
     public void setAssigneeId(Long assigneeId) {
         this.assigneeId = assigneeId;
+    }
+
+    public Set<Long> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<Long> labels) {
+        this.labels = labels;
     }
 }

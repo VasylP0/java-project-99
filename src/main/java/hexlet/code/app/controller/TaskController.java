@@ -4,27 +4,26 @@ package hexlet.code.app.controller;
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.model.User;
+import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.specification.TaskSpecification;
 
 import jakarta.validation.Valid;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
-import hexlet.code.app.model.Label;
-import hexlet.code.app.repository.LabelRepository;
-
-import java.util.Set;
 import java.util.HashSet;
-import hexlet.code.app.repository.LabelRepository;
-
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -34,7 +33,6 @@ public class TaskController {
     private final TaskStatusRepository taskStatusRepository;
     private final UserRepository userRepository;
     private final LabelRepository labelRepository;
-
 
     public TaskController(
             TaskRepository taskRepository,
@@ -49,15 +47,13 @@ public class TaskController {
     }
 
     private Set<Label> resolveLabels(Set<Long> labelIds) {
-
         Set<Label> labels = new HashSet<>();
 
         for (Long labelId : labelIds) {
             Label label = labelRepository.findById(labelId)
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
-                            "Invalid label ID: " + labelId
-                    ));
+                            "Invalid label ID: " + labelId));
 
             labels.add(label);
         }
@@ -65,10 +61,37 @@ public class TaskController {
         return labels;
     }
 
-
     @GetMapping
-    public List<TaskResponseDTO> index() {
-        return taskRepository.findAll()
+    public List<TaskResponseDTO> index(
+            @RequestParam(required = false) String titleCont,
+            @RequestParam(required = false) Long assigneeId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long labelId) {
+
+        Specification<Task> spec =
+                (root, query, cb) -> cb.conjunction();
+
+        if (titleCont != null) {
+            spec = spec.and(
+                    TaskSpecification.titleContains(titleCont));
+        }
+
+        if (assigneeId != null) {
+            spec = spec.and(
+                    TaskSpecification.hasAssignee(assigneeId));
+        }
+
+        if (status != null) {
+            spec = spec.and(
+                    TaskSpecification.hasStatus(status));
+        }
+
+        if (labelId != null) {
+            spec = spec.and(
+                    TaskSpecification.hasLabel(labelId));
+        }
+
+        return taskRepository.findAll(spec)
                 .stream()
                 .map(TaskResponseDTO::new)
                 .toList();
@@ -78,7 +101,8 @@ public class TaskController {
     public TaskResponseDTO show(@PathVariable Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task not found"));
+                        HttpStatus.NOT_FOUND,
+                        "Task not found"));
 
         return new TaskResponseDTO(task);
     }
@@ -91,7 +115,8 @@ public class TaskController {
         TaskStatus status = taskStatusRepository
                 .findBySlug(dto.getStatus())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Invalid status"));
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid status"));
 
         Task task = new Task();
         task.setName(dto.getTitle());
@@ -103,7 +128,8 @@ public class TaskController {
             User assignee = userRepository
                     .findById(dto.getAssigneeId())
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Invalid assignee"));
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid assignee"));
 
             task.setAssignee(assignee);
         }
@@ -122,7 +148,8 @@ public class TaskController {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task not found"));
+                        HttpStatus.NOT_FOUND,
+                        "Task not found"));
 
         if (dto.getTitle() != null) {
             task.setName(dto.getTitle());
@@ -140,7 +167,8 @@ public class TaskController {
             TaskStatus status = taskStatusRepository
                     .findBySlug(dto.getStatus())
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Invalid status"));
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid status"));
 
             task.setTaskStatus(status);
         }
@@ -149,7 +177,8 @@ public class TaskController {
             User assignee = userRepository
                     .findById(dto.getAssigneeId())
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Invalid assignee"));
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid assignee"));
 
             task.setAssignee(assignee);
         }
@@ -167,7 +196,8 @@ public class TaskController {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task not found"));
+                        HttpStatus.NOT_FOUND,
+                        "Task not found"));
 
         taskRepository.delete(task);
     }

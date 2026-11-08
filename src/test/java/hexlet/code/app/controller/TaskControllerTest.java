@@ -45,7 +45,7 @@ class TaskControllerTest {
                 labelRepository
         );
 
-        assertTrue(controller.index().isEmpty());
+        assertTrue(controller.index(null, null, null, null).isEmpty());
     }
 
     @Test

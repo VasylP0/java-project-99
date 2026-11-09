@@ -11,7 +11,7 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:hexlet-development-only-jwt-secret-2026-change-in-production}
 sentry:
   dsn: ${SENTRY_DSN:}
   send-default-pii: false

@@ -20,7 +20,7 @@ repositories {
 }
 
 sentry {
-	includeSourceContext = true
+	includeSourceContext = false
 	org = 'byz-cath-archdiocese-of-pittsb'
 	projectName = 'java-spring'
 	authToken = System.getenv('SENTRY_AUTH_TOKEN')

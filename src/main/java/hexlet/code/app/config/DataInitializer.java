@@ -24,23 +24,24 @@ public class DataInitializer {
             String email = System.getenv("ADMIN_EMAIL");
             String password = System.getenv("ADMIN_PASSWORD");
 
-            if (email == null || password == null) {
-                throw new IllegalStateException(
-                        "ADMIN_EMAIL and ADMIN_PASSWORD must be configured");
+            // Create administrator only when credentials are configured
+            if (email != null && !email.isBlank()
+                    && password != null && !password.isBlank()) {
+
+                if (userRepository.findByEmail(email).isEmpty()) {
+                    User admin = new User();
+
+                    admin.setFirstName("Admin");
+                    admin.setLastName("User");
+                    admin.setEmail(email);
+                    admin.setPassword(passwordEncoder.encode(password));
+                    admin.setAdmin(true);
+
+                    userRepository.save(admin);
+                }
             }
 
-            if (userRepository.findByEmail(email).isEmpty()) {
-                User admin = new User();
-
-                admin.setFirstName("Admin");
-                admin.setLastName("User");
-                admin.setEmail(email);
-                admin.setPassword(passwordEncoder.encode(password));
-                admin.setAdmin(true);
-
-                userRepository.save(admin);
-            }
-
+            // Create default labels
             if (!labelRepository.existsByName("feature")) {
                 Label feature = new Label();
                 feature.setName("feature");

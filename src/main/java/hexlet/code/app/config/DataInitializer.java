@@ -21,16 +21,29 @@ public class DataInitializer {
             PasswordEncoder passwordEncoder) {
 
         return args -> {
+
+            // Create the default Hexlet administrator
+            if (userRepository.findByEmail("hexlet@example.com").isEmpty()) {
+                User admin = new User();
+                admin.setFirstName("Admin");
+                admin.setLastName("Hexlet");
+                admin.setEmail("hexlet@example.com");
+                admin.setPassword(passwordEncoder.encode("qwerty"));
+                admin.setAdmin(true);
+
+                userRepository.save(admin);
+            }
+
+            // Optional administrator from environment variables
             String email = System.getenv("ADMIN_EMAIL");
             String password = System.getenv("ADMIN_PASSWORD");
 
-            // Create administrator only when credentials are configured
             if (email != null && !email.isBlank()
-                    && password != null && !password.isBlank()) {
+                    && password != null && !password.isBlank()
+                    && !email.equalsIgnoreCase("hexlet@example.com")) {
 
                 if (userRepository.findByEmail(email).isEmpty()) {
                     User admin = new User();
-
                     admin.setFirstName("Admin");
                     admin.setLastName("User");
                     admin.setEmail(email);

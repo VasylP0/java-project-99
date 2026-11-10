@@ -3,8 +3,11 @@ package hexlet.code.app.config;
 
 import hexlet.code.app.model.User;
 import hexlet.code.app.model.Label;
+import hexlet.code.app.model.TaskStatus;
+
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.repository.TaskStatusRepository;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +21,7 @@ public class DataInitializer {
     public CommandLineRunner initAdmin(
             UserRepository userRepository,
             LabelRepository labelRepository,
+            TaskStatusRepository taskStatusRepository,
             PasswordEncoder passwordEncoder) {
 
         return args -> {
@@ -54,6 +58,13 @@ public class DataInitializer {
                 }
             }
 
+            // Create default task statuses
+            createStatus(taskStatusRepository, "Draft", "draft");
+            createStatus(taskStatusRepository, "To Review", "to_review");
+            createStatus(taskStatusRepository, "To Be Fixed", "to_be_fixed");
+            createStatus(taskStatusRepository, "To Publish", "to_publish");
+            createStatus(taskStatusRepository, "Published", "published");
+
             // Create default labels
             if (!labelRepository.existsByName("feature")) {
                 Label feature = new Label();
@@ -61,11 +72,24 @@ public class DataInitializer {
                 labelRepository.save(feature);
             }
 
-            if (!labelRepository.existsByName("bug")) {
-                Label bug = new Label();
-                bug.setName("bug");
-                labelRepository.save(bug);
+            if (!labelRepository.existsByName("bugs")) {
+                Label bugs = new Label();
+                bugs.setName("bugs");
+                labelRepository.save(bugs);
             }
         };
+    }
+
+    private void createStatus(
+            TaskStatusRepository repository,
+            String name,
+            String slug) {
+
+        if (repository.findBySlug(slug).isEmpty()) {
+            TaskStatus status = new TaskStatus();
+            status.setName(name);
+            status.setSlug(slug);
+            repository.save(status);
+        }
     }
 }

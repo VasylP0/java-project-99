@@ -44,8 +44,9 @@ class TaskControllerTest {
                 userRepository,
                 labelRepository
         );
-
-        assertTrue(controller.index(null, null, null, null).isEmpty());
+        when(taskRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
+                .thenReturn(java.util.List.of());
+        assertTrue(controller.index(null, null, null, null).getBody().isEmpty());
     }
 
     @Test

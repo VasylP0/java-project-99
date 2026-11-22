@@ -3,8 +3,8 @@ package hexlet.code.app.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.Set;
-
 
 public class TaskCreateDTO {
 
@@ -18,12 +18,11 @@ public class TaskCreateDTO {
     @NotBlank
     private String status;
 
-
     @JsonProperty("assignee_id")
     private Long assigneeId;
 
+    @JsonAlias({"taskLabelIds", "taskLabels"})
     private Set<Long> labels;
-
 
     public String getTitle() {
         return title;
@@ -72,5 +71,4 @@ public class TaskCreateDTO {
     public void setLabels(Set<Long> labels) {
         this.labels = labels;
     }
-
 }

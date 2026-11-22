@@ -60,7 +60,7 @@ public class DataInitializer {
 
             // Create default task statuses
             createStatus(taskStatusRepository, "Draft", "draft");
-            createStatus(taskStatusRepository, "To Review", "to_review");
+            createStatus(taskStatusRepository, "ToReview", "to_review");
             createStatus(taskStatusRepository, "To Be Fixed", "to_be_fixed");
             createStatus(taskStatusRepository, "To Publish", "to_publish");
             createStatus(taskStatusRepository, "Published", "published");

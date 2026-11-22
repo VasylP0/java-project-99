@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -61,9 +63,9 @@ public class TaskController {
         return labels;
     }
 
-    @GetMapping
-    public List<TaskResponseDTO> index(
-            @RequestParam(required = false) String titleCont,
+            @GetMapping
+            public ResponseEntity<List<TaskResponseDTO>> index(
+                    @RequestParam(required = false) String titleCont,
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long labelId) {
@@ -91,10 +93,16 @@ public class TaskController {
                     TaskSpecification.hasLabel(labelId));
         }
 
-        return taskRepository.findAll(spec)
+        List<TaskResponseDTO> tasks = taskRepository.findAll(spec)
                 .stream()
                 .map(TaskResponseDTO::new)
                 .toList();
+
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(tasks.size()))
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                        "X-Total-Count")
+                .body(tasks);
     }
 
     @GetMapping("/{id}")

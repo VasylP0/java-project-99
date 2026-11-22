@@ -1,21 +1,19 @@
+
 package hexlet.code.app.controller;
 
-import hexlet.code.app.repository.TaskStatusRepository;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import hexlet.code.app.model.TaskStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
-import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import hexlet.code.app.repository.TaskStatusRepository;
+
 import jakarta.validation.Valid;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/task_statuses")
@@ -26,49 +24,63 @@ public class TaskStatusController {
     public TaskStatusController(TaskStatusRepository repository) {
         this.repository = repository;
     }
+
+    @GetMapping
+    public ResponseEntity<List<TaskStatus>> index() {
+        List<TaskStatus> statuses = repository.findAll();
+
+        return ResponseEntity.ok()
+                .header("X-Total-Count",
+                        String.valueOf(statuses.size()))
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                        "X-Total-Count")
+                .body(statuses);
+    }
+
     @GetMapping("/{id}")
     public TaskStatus show(@PathVariable Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task status not found"
+                        HttpStatus.NOT_FOUND,
+                        "Task status not found"
                 ));
     }
-    @GetMapping
-    public List<TaskStatus> index() {
-        return repository.findAll();
-    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskStatus create(@Valid @RequestBody TaskStatus taskStatus) {
+    public TaskStatus create(
+            @Valid @RequestBody TaskStatus status) {
         try {
-            return repository.saveAndFlush(taskStatus);
+            return repository.saveAndFlush(status);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Task status name or slug already exists",
+                    "Task status already exists",
                     e
             );
         }
     }
+
     @PutMapping("/{id}")
     public TaskStatus update(
             @PathVariable Long id,
             @Valid @RequestBody TaskStatus data) {
 
-        TaskStatus taskStatus = repository.findById(id)
+        TaskStatus status = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task status not found"
+                        HttpStatus.NOT_FOUND,
+                        "Task status not found"
                 ));
 
-        taskStatus.setName(data.getName());
-        taskStatus.setSlug(data.getSlug());
+        status.setName(data.getName());
+        status.setSlug(data.getSlug());
 
         try {
-            return repository.saveAndFlush(taskStatus);
+            return repository.saveAndFlush(status);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Task status name or slug already exists",
+                    "Task status already exists",
                     e
             );
         }
@@ -76,19 +88,21 @@ public class TaskStatusController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
-        TaskStatus taskStatus = repository.findById(id)
+    public void delete(@PathVariable Long id) {
+
+        TaskStatus status = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Task status not found"
+                        HttpStatus.NOT_FOUND,
+                        "Task status not found"
                 ));
 
         try {
-            repository.delete(taskStatus);
+            repository.delete(status);
             repository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Cannot delete a task status that is used by a task",
+                    "Task status is in use",
                     e
             );
         }

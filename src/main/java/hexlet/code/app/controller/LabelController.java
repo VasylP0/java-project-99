@@ -10,7 +10,9 @@ import hexlet.code.app.repository.LabelRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,11 +37,18 @@ public class LabelController {
     }
 
     @GetMapping
-    public List<LabelResponseDTO> index() {
-        return repository.findAll()
+    public ResponseEntity<List<LabelResponseDTO>> index() {
+        List<LabelResponseDTO> labels = repository.findAll()
                 .stream()
                 .map(this::toDTO)
                 .toList();
+
+        return ResponseEntity.ok()
+                .header("X-Total-Count",
+                        String.valueOf(labels.size()))
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                        "X-Total-Count")
+                .body(labels);
     }
 
     @GetMapping("/{id}")

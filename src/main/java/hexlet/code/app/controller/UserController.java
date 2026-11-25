@@ -1,15 +1,11 @@
 package hexlet.code.app.controller;
 
 import hexlet.code.app.model.User;
-import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -17,22 +13,20 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/{id}")
     public User show(@PathVariable Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found"));
+        return userService.findById(id);
     }
 
     @GetMapping
     public ResponseEntity<List<User>> index() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userService.findAll();
 
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(users.size()))
@@ -41,8 +35,7 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return userService.create(user);
     }
 
     @PutMapping("/{id}")
@@ -51,19 +44,8 @@ public class UserController {
             @RequestBody User updatedUser,
             Authentication authentication) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found"));
-
-        if (!user.getEmail().equals(authentication.getName())) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "Access denied");
-        }
-
-        user.setFirstName(updatedUser.getFirstName());
-        user.setLastName(updatedUser.getLastName());
-
-        return userRepository.save(user);
+        return userService.update(
+                id, updatedUser, authentication.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -71,24 +53,7 @@ public class UserController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found"));
-
-        User currentUser = userRepository
-                .findByEmail(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "User not found"));
-
-        if (!currentUser.isAdmin()
-                && !user.getEmail().equals(authentication.getName())) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "Access denied");
-        }
-
-        userRepository.delete(user);
-        userRepository.flush();
-
-        return user;
+        return userService.delete(
+                id, authentication.getName());
     }
 }

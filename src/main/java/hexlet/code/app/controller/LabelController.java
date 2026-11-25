@@ -8,8 +8,6 @@ import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.LabelRepository;
 
 import jakarta.validation.Valid;
-
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,15 +68,7 @@ public class LabelController {
         Label label = new Label();
         label.setName(data.getName());
 
-        try {
-            return toDTO(repository.saveAndFlush(label));
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Label name already exists",
-                    e
-            );
-        }
+        return toDTO(repository.saveAndFlush(label));
     }
 
     @PutMapping("/{id}")
@@ -94,15 +84,7 @@ public class LabelController {
 
         label.setName(data.getName());
 
-        try {
-            return toDTO(repository.saveAndFlush(label));
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Label name already exists",
-                    e
-            );
-        }
+        return toDTO(repository.saveAndFlush(label));
     }
 
     @DeleteMapping("/{id}")
@@ -115,15 +97,7 @@ public class LabelController {
                         "Label not found"
                 ));
 
-        try {
-            repository.delete(label);
-            repository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Cannot delete a label used by a task",
-                    e
-            );
-        }
+        repository.delete(label);
+        repository.flush();
     }
 }

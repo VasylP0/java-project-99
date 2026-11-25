@@ -1,11 +1,9 @@
-
 package hexlet.code.app.controller;
 
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -88,16 +86,8 @@ public class UserController {
                     HttpStatus.FORBIDDEN, "Access denied");
         }
 
-        try {
-            userRepository.delete(user);
-            userRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Cannot delete a user assigned to a task",
-                    e
-            );
-        }
+        userRepository.delete(user);
+        userRepository.flush();
 
         return user;
     }

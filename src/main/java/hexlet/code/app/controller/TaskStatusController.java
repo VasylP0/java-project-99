@@ -1,4 +1,3 @@
-
 package hexlet.code.app.controller;
 
 import hexlet.code.app.model.TaskStatus;
@@ -6,7 +5,6 @@ import hexlet.code.app.repository.TaskStatusRepository;
 
 import jakarta.validation.Valid;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,15 +48,8 @@ public class TaskStatusController {
     @ResponseStatus(HttpStatus.CREATED)
     public TaskStatus create(
             @Valid @RequestBody TaskStatus status) {
-        try {
-            return repository.saveAndFlush(status);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Task status already exists",
-                    e
-            );
-        }
+
+        return repository.saveAndFlush(status);
     }
 
     @PutMapping("/{id}")
@@ -75,15 +66,7 @@ public class TaskStatusController {
         status.setName(data.getName());
         status.setSlug(data.getSlug());
 
-        try {
-            return repository.saveAndFlush(status);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Task status already exists",
-                    e
-            );
-        }
+        return repository.saveAndFlush(status);
     }
 
     @DeleteMapping("/{id}")
@@ -96,15 +79,7 @@ public class TaskStatusController {
                         "Task status not found"
                 ));
 
-        try {
-            repository.delete(status);
-            repository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Task status is in use",
-                    e
-            );
-        }
+        repository.delete(status);
+        repository.flush();
     }
 }

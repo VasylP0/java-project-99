@@ -1,9 +1,11 @@
+
 package hexlet.code.app.controller;
 
 import hexlet.code.app.model.User;
 import hexlet.code.app.service.UserService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@userAuthorization.isOwner(#id, authentication.name)")
     public User update(
             @PathVariable Long id,
             @RequestBody User updatedUser,
@@ -49,6 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @userAuthorization.isOwner(#id, authentication.name)")
     public User delete(
             @PathVariable Long id,
             Authentication authentication) {

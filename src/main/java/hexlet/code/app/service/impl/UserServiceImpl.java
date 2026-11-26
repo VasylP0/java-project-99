@@ -39,12 +39,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        user.setAdmin(false);
+
         user.setPassword(
                 passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
-
     @Override
     public User update(
             Long id,

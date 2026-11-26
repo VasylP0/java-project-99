@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import hexlet.code.app.service.TaskService;
+import hexlet.code.app.service.impl.TaskServiceImpl;
 
 class TaskControllerTest {
 
@@ -38,12 +40,14 @@ class TaskControllerTest {
         LabelRepository labelRepository =
                 Mockito.mock(LabelRepository.class);
 
-        TaskController controller = new TaskController(
+        TaskService taskService = new TaskServiceImpl(
                 taskRepository,
                 statusRepository,
                 userRepository,
                 labelRepository
         );
+
+        TaskController controller = new TaskController(taskService);
         when(taskRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
                 .thenReturn(java.util.List.of());
         assertTrue(controller.index(null, null, null, null).getBody().isEmpty());
@@ -63,12 +67,14 @@ class TaskControllerTest {
         LabelRepository labelRepository =
                 Mockito.mock(LabelRepository.class);
 
-        TaskController controller = new TaskController(
+        TaskService taskService = new TaskServiceImpl(
                 taskRepository,
                 statusRepository,
                 userRepository,
                 labelRepository
         );
+
+        TaskController controller = new TaskController(taskService);
 
         TaskStatus status = new TaskStatus();
         status.setSlug("new");
@@ -105,12 +111,14 @@ class TaskControllerTest {
         LabelRepository labelRepository =
                 Mockito.mock(LabelRepository.class);
 
-        TaskController controller = new TaskController(
+        TaskService taskService = new TaskServiceImpl(
                 taskRepository,
                 statusRepository,
                 userRepository,
                 labelRepository
         );
+
+        TaskController controller = new TaskController(taskService);
 
         TaskStatus status = new TaskStatus();
         status.setSlug("new");
@@ -144,12 +152,14 @@ class TaskControllerTest {
         LabelRepository labelRepository =
                 Mockito.mock(LabelRepository.class);
 
-        TaskController controller = new TaskController(
+        TaskService taskService = new TaskServiceImpl(
                 taskRepository,
                 statusRepository,
                 userRepository,
                 labelRepository
         );
+
+        TaskController controller = new TaskController(taskService);
 
         TaskStatus status = new TaskStatus();
         status.setSlug("new");
@@ -189,12 +199,14 @@ class TaskControllerTest {
         LabelRepository labelRepository =
                 Mockito.mock(LabelRepository.class);
 
-        TaskController controller = new TaskController(
+        TaskService taskService = new TaskServiceImpl(
                 taskRepository,
                 statusRepository,
                 userRepository,
                 labelRepository
         );
+
+        TaskController controller = new TaskController(taskService);
 
         Task task = new Task();
 

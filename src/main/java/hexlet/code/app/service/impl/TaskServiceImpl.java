@@ -1,0 +1,177 @@
+package hexlet.code.app.service.impl;
+
+import hexlet.code.app.dto.TaskCreateDTO;
+import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.model.Label;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.model.User;
+import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.repository.TaskRepository;
+import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.service.TaskService;
+import hexlet.code.app.specification.TaskSpecification;
+
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class TaskServiceImpl implements TaskService {
+
+    private final TaskRepository taskRepository;
+    private final TaskStatusRepository taskStatusRepository;
+    private final UserRepository userRepository;
+    private final LabelRepository labelRepository;
+
+    public TaskServiceImpl(
+            TaskRepository taskRepository,
+            TaskStatusRepository taskStatusRepository,
+            UserRepository userRepository,
+            LabelRepository labelRepository) {
+
+        this.taskRepository = taskRepository;
+        this.taskStatusRepository = taskStatusRepository;
+        this.userRepository = userRepository;
+        this.labelRepository = labelRepository;
+    }
+
+    @Override
+    public List<Task> findAll(
+            String titleCont,
+            Long assigneeId,
+            String status,
+            Long labelId) {
+
+        Specification<Task> spec =
+                (root, query, cb) -> cb.conjunction();
+
+        if (titleCont != null) {
+            spec = spec.and(
+                    TaskSpecification.titleContains(titleCont));
+        }
+
+        if (assigneeId != null) {
+            spec = spec.and(
+                    TaskSpecification.hasAssignee(assigneeId));
+        }
+
+        if (status != null) {
+            spec = spec.and(
+                    TaskSpecification.hasStatus(status));
+        }
+
+        if (labelId != null) {
+            spec = spec.and(
+                    TaskSpecification.hasLabel(labelId));
+        }
+
+        return taskRepository.findAll(spec);
+    }
+
+    @Override
+    public Task findById(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Task not found"));
+    }
+
+    @Override
+    public Task create(TaskCreateDTO dto) {
+
+        Task task = new Task();
+
+        task.setName(dto.getTitle());
+        task.setIndex(dto.getIndex());
+        task.setDescription(dto.getContent());
+        task.setTaskStatus(resolveStatus(dto.getStatus()));
+
+        if (dto.getAssigneeId() != null) {
+            task.setAssignee(
+                    resolveAssignee(dto.getAssigneeId()));
+        }
+
+        if (dto.getLabels() != null) {
+            task.setLabels(resolveLabels(dto.getLabels()));
+        }
+
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task update(Long id, TaskUpdateDTO dto) {
+
+        Task task = findById(id);
+
+        if (dto.getTitle() != null) {
+            task.setName(dto.getTitle());
+        }
+
+        if (dto.getIndex() != null) {
+            task.setIndex(dto.getIndex());
+        }
+
+        if (dto.getContent() != null) {
+            task.setDescription(dto.getContent());
+        }
+
+        if (dto.getStatus() != null) {
+            task.setTaskStatus(
+                    resolveStatus(dto.getStatus()));
+        }
+
+        if (dto.getAssigneeId() != null) {
+            task.setAssignee(
+                    resolveAssignee(dto.getAssigneeId()));
+        }
+
+        if (dto.getLabels() != null) {
+            task.setLabels(resolveLabels(dto.getLabels()));
+        }
+
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Task task = findById(id);
+        taskRepository.delete(task);
+    }
+
+    private TaskStatus resolveStatus(String slug) {
+        return taskStatusRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid status"));
+    }
+
+    private User resolveAssignee(Long assigneeId) {
+        return userRepository.findById(assigneeId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid assignee"));
+    }
+
+    private Set<Label> resolveLabels(Set<Long> labelIds) {
+
+        Set<Label> labels = new HashSet<>();
+
+        for (Long labelId : labelIds) {
+            Label label = labelRepository.findById(labelId)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid label ID: " + labelId));
+
+            labels.add(label);
+        }
+
+        return labels;
+    }
+}

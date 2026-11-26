@@ -1,18 +1,16 @@
-
 package hexlet.code.app.controller;
 
 import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.LabelUpdateDTO;
 import hexlet.code.app.dto.LabelResponseDTO;
 import hexlet.code.app.model.Label;
-import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.service.LabelService;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,10 +18,10 @@ import java.util.List;
 @RequestMapping("/api/labels")
 public class LabelController {
 
-    private final LabelRepository repository;
+    private final LabelService labelService;
 
-    public LabelController(LabelRepository repository) {
-        this.repository = repository;
+    public LabelController(LabelService labelService) {
+        this.labelService = labelService;
     }
 
     private LabelResponseDTO toDTO(Label label) {
@@ -36,7 +34,7 @@ public class LabelController {
 
     @GetMapping
     public ResponseEntity<List<LabelResponseDTO>> index() {
-        List<LabelResponseDTO> labels = repository.findAll()
+        List<LabelResponseDTO> labels = labelService.findAll()
                 .stream()
                 .map(this::toDTO)
                 .toList();
@@ -51,13 +49,7 @@ public class LabelController {
 
     @GetMapping("/{id}")
     public LabelResponseDTO show(@PathVariable Long id) {
-        Label label = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Label not found"
-                ));
-
-        return toDTO(label);
+        return toDTO(labelService.findById(id));
     }
 
     @PostMapping
@@ -68,7 +60,7 @@ public class LabelController {
         Label label = new Label();
         label.setName(data.getName());
 
-        return toDTO(repository.saveAndFlush(label));
+        return toDTO(labelService.create(label));
     }
 
     @PutMapping("/{id}")
@@ -76,28 +68,15 @@ public class LabelController {
             @PathVariable Long id,
             @Valid @RequestBody LabelUpdateDTO data) {
 
-        Label label = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Label not found"
-                ));
-
+        Label label = new Label();
         label.setName(data.getName());
 
-        return toDTO(repository.saveAndFlush(label));
+        return toDTO(labelService.update(id, label));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-
-        Label label = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Label not found"
-                ));
-
-        repository.delete(label);
-        repository.flush();
+        labelService.delete(id);
     }
 }

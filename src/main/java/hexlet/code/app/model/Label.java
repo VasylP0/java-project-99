@@ -1,4 +1,3 @@
-
 package hexlet.code.app.model;
 
 import jakarta.persistence.*;
@@ -46,5 +45,24 @@ public class Label {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof Label other)) {
+            return false;
+        }
+
+        return getId() != null
+                && getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Label.class.hashCode();
     }
 }

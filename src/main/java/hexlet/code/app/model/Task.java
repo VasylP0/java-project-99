@@ -1,15 +1,12 @@
-
 package hexlet.code.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
 import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 
 @Entity
 @Table(name = "tasks")
@@ -22,7 +19,6 @@ public class Task {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
 
     @NotBlank
     @Column(nullable = false)
@@ -44,7 +40,6 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )
     private Set<Label> labels = new HashSet<>();
-
 
     @ManyToOne
     @JoinColumn(name = "assignee_id")
@@ -108,5 +103,24 @@ public class Task {
 
     public void setLabels(Set<Label> labels) {
         this.labels = labels;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof Task other)) {
+            return false;
+        }
+
+        return getId() != null
+                && getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Task.class.hashCode();
     }
 }

@@ -1,7 +1,8 @@
-
 package hexlet.code.app.controller;
 
-import hexlet.code.app.model.User;
+import hexlet.code.app.dto.UserCreateDTO;
+import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.dto.UserResponseDTO;
 import hexlet.code.app.service.UserService;
 
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User show(@PathVariable Long id) {
+    public UserResponseDTO show(@PathVariable Long id) {
         return userService.findById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> index() {
-        List<User> users = userService.findAll();
+    public ResponseEntity<List<UserResponseDTO>> index() {
+        List<UserResponseDTO> users = userService.findAll();
 
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(users.size()))
@@ -36,24 +37,26 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        return userService.create(user);
+    public UserResponseDTO create(
+            @RequestBody UserCreateDTO dto) {
+
+        return userService.create(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@userAuthorization.isOwner(#id, authentication.name)")
-    public User update(
+    public UserResponseDTO update(
             @PathVariable Long id,
-            @RequestBody User updatedUser,
+            @RequestBody UserUpdateDTO dto,
             Authentication authentication) {
 
         return userService.update(
-                id, updatedUser, authentication.getName());
+                id, dto, authentication.getName());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @userAuthorization.isOwner(#id, authentication.name)")
-    public User delete(
+    public UserResponseDTO delete(
             @PathVariable Long id,
             Authentication authentication) {
 

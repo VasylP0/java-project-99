@@ -144,18 +144,10 @@ public class TaskServiceImpl implements TaskService {
 
     private Set<Label> resolveLabels(Set<Long> labelIds) {
 
-        Set<Label> labels = new HashSet<>();
+        Set<Label> labels = new HashSet<>(labelRepository.findAllById(labelIds));
 
-        for (Long labelId : labelIds) {
-            Label label =
-                    labelRepository
-                            .findById(labelId)
-                            .orElseThrow(() ->
-                                    new ResponseStatusException(
-                                            HttpStatus.BAD_REQUEST,
-                                            "Invalid label ID: " + labelId));
-
-            labels.add(label);
+        if (labels.size() != labelIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid label IDs");
         }
 
         return labels;

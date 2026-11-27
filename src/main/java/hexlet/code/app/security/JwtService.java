@@ -1,13 +1,12 @@
-
 package hexlet.code.app.security;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Service;
-import io.jsonwebtoken.JwtException;
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import javax.crypto.SecretKey;
+import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
@@ -15,10 +14,9 @@ public class JwtService {
     private final SecretKey key;
 
     public JwtService(
-            @org.springframework.beans.factory.annotation.Value(
-                    "${app.jwt.secret}") String secret) {
-        this.key = Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8));
+            @org.springframework.beans.factory.annotation.Value("${app.jwt.secret}")
+                    String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String email) {
@@ -44,5 +42,4 @@ public class JwtService {
             return null;
         }
     }
-
 }

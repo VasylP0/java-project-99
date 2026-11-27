@@ -3,15 +3,11 @@ package hexlet.code.app.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(
-        name = "labels",
-        uniqueConstraints = @UniqueConstraint(columnNames = "name")
-)
+@Table(name = "labels", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Label {
 
     @Id
@@ -57,8 +53,7 @@ public class Label {
             return false;
         }
 
-        return getId() != null
-                && getId().equals(other.getId());
+        return getId() != null && getId().equals(other.getId());
     }
 
     @Override

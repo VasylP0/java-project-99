@@ -7,12 +7,10 @@ import hexlet.code.app.mapper.LabelMapper;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.service.LabelService;
-
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class LabelServiceImpl implements LabelService {
@@ -20,26 +18,22 @@ public class LabelServiceImpl implements LabelService {
     private final LabelRepository labelRepository;
     private final LabelMapper labelMapper;
 
-    public LabelServiceImpl(
-            LabelRepository labelRepository,
-            LabelMapper labelMapper) {
+    public LabelServiceImpl(LabelRepository labelRepository, LabelMapper labelMapper) {
 
         this.labelRepository = labelRepository;
         this.labelMapper = labelMapper;
     }
 
     private Label findEntityById(Long id) {
-        return labelRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Label not found"));
+        return labelRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label not found"));
     }
 
     @Override
     public List<LabelResponseDTO> findAll() {
-        return labelRepository.findAll()
-                .stream()
-                .map(labelMapper::toDTO)
-                .toList();
+        return labelRepository.findAll().stream().map(labelMapper::toDTO).toList();
     }
 
     @Override
@@ -51,20 +45,17 @@ public class LabelServiceImpl implements LabelService {
     public LabelResponseDTO create(LabelCreateDTO data) {
         Label label = labelMapper.toEntity(data);
 
-        return labelMapper.toDTO(
-                labelRepository.saveAndFlush(label));
+        return labelMapper.toDTO(labelRepository.saveAndFlush(label));
     }
 
     @Override
-    public LabelResponseDTO update(
-            Long id, LabelUpdateDTO data) {
+    public LabelResponseDTO update(Long id, LabelUpdateDTO data) {
 
         Label label = findEntityById(id);
 
         labelMapper.update(data, label);
 
-        return labelMapper.toDTO(
-                labelRepository.saveAndFlush(label));
+        return labelMapper.toDTO(labelRepository.saveAndFlush(label));
     }
 
     @Override

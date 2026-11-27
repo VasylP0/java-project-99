@@ -1,7 +1,6 @@
 package hexlet.code.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 

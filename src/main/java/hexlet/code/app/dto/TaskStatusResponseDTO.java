@@ -9,11 +9,7 @@ public class TaskStatusResponseDTO {
     private final String slug;
     private final LocalDateTime createdAt;
 
-    public TaskStatusResponseDTO(
-            Long id,
-            String name,
-            String slug,
-            LocalDateTime createdAt) {
+    public TaskStatusResponseDTO(Long id, String name, String slug, LocalDateTime createdAt) {
 
         this.id = id;
         this.name = name;

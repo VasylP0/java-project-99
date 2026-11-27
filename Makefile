@@ -1,5 +1,4 @@
-
-.PHONY: setup build test run start
+.PHONY: setup build test run start lint format
 
 setup:
 	./gradlew clean build
@@ -15,3 +14,9 @@ run:
 
 start:
 	./gradlew bootRun
+
+lint:
+	./gradlew spotlessCheck
+
+format:
+	./gradlew spotlessApply

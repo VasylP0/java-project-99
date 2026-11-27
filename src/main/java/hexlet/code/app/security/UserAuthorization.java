@@ -15,9 +15,12 @@ public class UserAuthorization {
     }
 
     public boolean isOwner(Long id, String email) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found"));
+        var user =
+                userRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "User not found"));
 
         return user.getEmail().equals(email);
     }

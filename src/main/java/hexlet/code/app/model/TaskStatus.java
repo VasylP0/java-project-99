@@ -2,7 +2,6 @@ package hexlet.code.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -70,8 +69,7 @@ public class TaskStatus {
             return false;
         }
 
-        return getId() != null
-                && getId().equals(other.getId());
+        return getId() != null && getId().equals(other.getId());
     }
 
     @Override

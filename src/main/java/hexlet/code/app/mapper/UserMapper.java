@@ -1,10 +1,9 @@
 package hexlet.code.app.mapper;
 
 import hexlet.code.app.dto.UserCreateDTO;
-import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.dto.UserResponseDTO;
+import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.model.User;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -27,7 +26,5 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    void update(
-            UserUpdateDTO dto,
-            @MappingTarget User user);
+    void update(UserUpdateDTO dto, @MappingTarget User user);
 }

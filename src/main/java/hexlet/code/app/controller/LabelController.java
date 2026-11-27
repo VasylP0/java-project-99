@@ -1,17 +1,15 @@
 package hexlet.code.app.controller;
 
 import hexlet.code.app.dto.LabelCreateDTO;
-import hexlet.code.app.dto.LabelUpdateDTO;
 import hexlet.code.app.dto.LabelResponseDTO;
+import hexlet.code.app.dto.LabelUpdateDTO;
 import hexlet.code.app.service.LabelService;
-
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/labels")
@@ -28,10 +26,8 @@ public class LabelController {
         List<LabelResponseDTO> labels = labelService.findAll();
 
         return ResponseEntity.ok()
-                .header("X-Total-Count",
-                        String.valueOf(labels.size()))
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
-                        "X-Total-Count")
+                .header("X-Total-Count", String.valueOf(labels.size()))
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "X-Total-Count")
                 .body(labels);
     }
 
@@ -42,16 +38,13 @@ public class LabelController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LabelResponseDTO create(
-            @Valid @RequestBody LabelCreateDTO data) {
+    public LabelResponseDTO create(@Valid @RequestBody LabelCreateDTO data) {
 
         return labelService.create(data);
     }
 
     @PutMapping("/{id}")
-    public LabelResponseDTO update(
-            @PathVariable Long id,
-            @Valid @RequestBody LabelUpdateDTO data) {
+    public LabelResponseDTO update(@PathVariable Long id, @Valid @RequestBody LabelUpdateDTO data) {
 
         return labelService.update(id, data);
     }

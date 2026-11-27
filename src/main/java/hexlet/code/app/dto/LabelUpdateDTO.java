@@ -1,4 +1,3 @@
-
 package hexlet.code.app.dto;
 
 import jakarta.validation.constraints.NotBlank;

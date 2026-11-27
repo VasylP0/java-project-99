@@ -1,9 +1,8 @@
 package hexlet.code.app.service;
 
 import hexlet.code.app.dto.UserCreateDTO;
-import hexlet.code.app.dto.UserUpdateDTO;
 import hexlet.code.app.dto.UserResponseDTO;
-
+import hexlet.code.app.dto.UserUpdateDTO;
 import java.util.List;
 
 public interface UserService {
@@ -14,12 +13,7 @@ public interface UserService {
 
     UserResponseDTO create(UserCreateDTO dto);
 
-    UserResponseDTO update(
-            Long id,
-            UserUpdateDTO dto,
-            String currentUserEmail);
+    UserResponseDTO update(Long id, UserUpdateDTO dto, String currentUserEmail);
 
-    UserResponseDTO delete(
-            Long id,
-            String currentUserEmail);
+    UserResponseDTO delete(Long id, String currentUserEmail);
 }

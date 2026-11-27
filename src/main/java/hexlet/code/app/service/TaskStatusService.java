@@ -1,9 +1,8 @@
 package hexlet.code.app.service;
 
 import hexlet.code.app.dto.TaskStatusCreateDTO;
-import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.dto.TaskStatusResponseDTO;
-
+import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import java.util.List;
 
 public interface TaskStatusService {

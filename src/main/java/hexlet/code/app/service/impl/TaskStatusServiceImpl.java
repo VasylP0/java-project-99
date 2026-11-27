@@ -1,18 +1,16 @@
 package hexlet.code.app.service.impl;
 
 import hexlet.code.app.dto.TaskStatusCreateDTO;
-import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.dto.TaskStatusResponseDTO;
+import hexlet.code.app.dto.TaskStatusUpdateDTO;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.service.TaskStatusService;
-
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class TaskStatusServiceImpl implements TaskStatusService {
@@ -21,8 +19,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     private final TaskStatusMapper taskStatusMapper;
 
     public TaskStatusServiceImpl(
-            TaskStatusRepository taskStatusRepository,
-            TaskStatusMapper taskStatusMapper) {
+            TaskStatusRepository taskStatusRepository, TaskStatusMapper taskStatusMapper) {
 
         this.taskStatusRepository = taskStatusRepository;
         this.taskStatusMapper = taskStatusMapper;
@@ -30,16 +27,14 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Override
     public List<TaskStatusResponseDTO> findAll() {
-        return taskStatusRepository.findAll().stream()
-                .map(taskStatusMapper::toDTO)
-                .toList();
+        return taskStatusRepository.findAll().stream().map(taskStatusMapper::toDTO).toList();
     }
 
     private TaskStatus findEntityById(Long id) {
-        return taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Task status not found"));
+        return taskStatusRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Task status not found"));
     }
 
     @Override
@@ -52,21 +47,17 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
         TaskStatus status = taskStatusMapper.toEntity(dto);
 
-        return taskStatusMapper.toDTO(
-                taskStatusRepository.saveAndFlush(status));
+        return taskStatusMapper.toDTO(taskStatusRepository.saveAndFlush(status));
     }
 
     @Override
-    public TaskStatusResponseDTO update(
-            Long id,
-            TaskStatusUpdateDTO dto) {
+    public TaskStatusResponseDTO update(Long id, TaskStatusUpdateDTO dto) {
 
         TaskStatus status = findEntityById(id);
 
         taskStatusMapper.update(dto, status);
 
-        return taskStatusMapper.toDTO(
-                taskStatusRepository.saveAndFlush(status));
+        return taskStatusMapper.toDTO(taskStatusRepository.saveAndFlush(status));
     }
 
     @Override

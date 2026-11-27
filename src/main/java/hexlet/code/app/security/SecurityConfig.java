@@ -1,59 +1,48 @@
-
 package hexlet.code.app.security;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter)
-            throws Exception {
+            HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.sameOrigin())
-                )
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpStatus.UNAUTHORIZED.value())
-                        )
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/assets/**",
-                                "/api/login",
-                                "/error",
-                                "/h2-console/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**"
-                        ).permitAll()
-
-                        .anyRequest().authenticated()
-                )
+        http.csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .exceptionHandling(exceptions ->
+                        exceptions.authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpStatus.UNAUTHORIZED.value())))
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers(
+                                        "/",
+                                        "/index.html",
+                                        "/assets/**",
+                                        "/api/login",
+                                        "/error",
+                                        "/h2-console/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v3/api-docs/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
                 .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -73,5 +62,4 @@ public class SecurityConfig {
         registration.setEnabled(false);
         return registration;
     }
-
 }

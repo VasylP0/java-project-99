@@ -1,14 +1,11 @@
-
 package hexlet.code.app.config;
 
-import hexlet.code.app.model.User;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.TaskStatus;
-
-import hexlet.code.app.repository.UserRepository;
+import hexlet.code.app.model.User;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskStatusRepository;
-
+import hexlet.code.app.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +39,10 @@ public class DataInitializer {
             String email = System.getenv("ADMIN_EMAIL");
             String password = System.getenv("ADMIN_PASSWORD");
 
-            if (email != null && !email.isBlank()
-                    && password != null && !password.isBlank()
+            if (email != null
+                    && !email.isBlank()
+                    && password != null
+                    && !password.isBlank()
                     && !email.equalsIgnoreCase("hexlet@example.com")) {
 
                 if (userRepository.findByEmail(email).isEmpty()) {
@@ -80,10 +79,7 @@ public class DataInitializer {
         };
     }
 
-    private void createStatus(
-            TaskStatusRepository repository,
-            String name,
-            String slug) {
+    private void createStatus(TaskStatusRepository repository, String name, String slug) {
 
         if (repository.findBySlug(slug).isEmpty()) {
             TaskStatus status = new TaskStatus();

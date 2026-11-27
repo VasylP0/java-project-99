@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public class TaskStatusUpdateDTO {
 
-    @NotBlank
-    private String name;
+    @NotBlank private String name;
 
-    @NotBlank
-    private String slug;
+    @NotBlank private String slug;
 
     public String getName() {
         return name;

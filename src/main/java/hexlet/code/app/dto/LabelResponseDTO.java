@@ -1,4 +1,3 @@
-
 package hexlet.code.app.dto;
 
 import java.time.LocalDateTime;
@@ -9,8 +8,7 @@ public class LabelResponseDTO {
     private String name;
     private LocalDateTime createdAt;
 
-    public LabelResponseDTO(Long id, String name,
-                            LocalDateTime createdAt) {
+    public LabelResponseDTO(Long id, String name, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;

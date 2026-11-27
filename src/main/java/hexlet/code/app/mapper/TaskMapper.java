@@ -5,7 +5,6 @@ import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
-
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,10 +28,7 @@ public interface TaskMapper {
     @Mapping(target = "labels", ignore = true)
     Task toEntity(TaskCreateDTO dto);
 
-    @BeanMapping(
-            nullValuePropertyMappingStrategy =
-                    NullValuePropertyMappingStrategy.IGNORE
-    )
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")

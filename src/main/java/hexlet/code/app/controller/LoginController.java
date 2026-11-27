@@ -1,7 +1,6 @@
 package hexlet.code.app.controller;
 
 import hexlet.code.app.service.AuthService;
-
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,13 +15,8 @@ public class LoginController {
 
     @PostMapping
     public String login(@RequestBody LoginRequest request) {
-        return authService.login(
-                request.username(),
-                request.password());
+        return authService.login(request.username(), request.password());
     }
 
-    public record LoginRequest(
-            String username,
-            String password) {
-    }
+    public record LoginRequest(String username, String password) {}
 }

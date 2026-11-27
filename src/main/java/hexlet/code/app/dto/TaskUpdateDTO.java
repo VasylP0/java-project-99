@@ -1,8 +1,7 @@
-
 package hexlet.code.app.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
 
 public class TaskUpdateDTO {

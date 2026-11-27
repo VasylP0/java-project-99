@@ -1,9 +1,8 @@
 package hexlet.code.app.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -24,8 +23,7 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public User() {
-    }
+    public User() {}
 
     public Long getId() {
         return id;
@@ -101,8 +99,7 @@ public class User {
             return false;
         }
 
-        return getId() != null
-                && getId().equals(other.getId());
+        return getId() != null && getId().equals(other.getId());
     }
 
     @Override

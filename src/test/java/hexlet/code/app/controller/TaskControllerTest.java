@@ -1,54 +1,47 @@
-
 package hexlet.code.app.controller;
-
-import hexlet.code.app.dto.TaskCreateDTO;
-import hexlet.code.app.dto.TaskResponseDTO;
-import hexlet.code.app.dto.TaskUpdateDTO;
-import hexlet.code.app.model.Task;
-import hexlet.code.app.mapper.TaskMapper;
-import org.mapstruct.factory.Mappers;
-import hexlet.code.app.model.TaskStatus;
-import hexlet.code.app.repository.LabelRepository;
-import hexlet.code.app.repository.TaskRepository;
-import hexlet.code.app.repository.TaskStatusRepository;
-import hexlet.code.app.repository.UserRepository;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import hexlet.code.app.dto.TaskCreateDTO;
+import hexlet.code.app.dto.TaskResponseDTO;
+import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.mapper.TaskMapper;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.repository.TaskRepository;
+import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.TaskService;
 import hexlet.code.app.service.impl.TaskServiceImpl;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import org.mockito.Mockito;
 
 class TaskControllerTest {
 
     @Test
     void testIndex() {
-        TaskRepository taskRepository =
-                Mockito.mock(TaskRepository.class);
+        TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
 
-        TaskStatusRepository statusRepository =
-                Mockito.mock(TaskStatusRepository.class);
+        TaskStatusRepository statusRepository = Mockito.mock(TaskStatusRepository.class);
 
-        UserRepository userRepository =
-                Mockito.mock(UserRepository.class);
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
 
-        LabelRepository labelRepository =
-                Mockito.mock(LabelRepository.class);
+        LabelRepository labelRepository = Mockito.mock(LabelRepository.class);
 
-        TaskService taskService = new TaskServiceImpl(
-                taskRepository,
-                statusRepository,
-                userRepository,
-                labelRepository,
-                Mappers.getMapper(TaskMapper.class)
-        );
+        TaskService taskService =
+                new TaskServiceImpl(
+                        taskRepository,
+                        statusRepository,
+                        userRepository,
+                        labelRepository,
+                        Mappers.getMapper(TaskMapper.class));
 
         TaskController controller = new TaskController(taskService);
         when(taskRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
@@ -58,33 +51,28 @@ class TaskControllerTest {
 
     @Test
     void testCreate() {
-        TaskRepository taskRepository =
-                Mockito.mock(TaskRepository.class);
+        TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
 
-        TaskStatusRepository statusRepository =
-                Mockito.mock(TaskStatusRepository.class);
+        TaskStatusRepository statusRepository = Mockito.mock(TaskStatusRepository.class);
 
-        UserRepository userRepository =
-                Mockito.mock(UserRepository.class);
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
 
-        LabelRepository labelRepository =
-                Mockito.mock(LabelRepository.class);
+        LabelRepository labelRepository = Mockito.mock(LabelRepository.class);
 
-        TaskService taskService = new TaskServiceImpl(
-                taskRepository,
-                statusRepository,
-                userRepository,
-                labelRepository,
-                Mappers.getMapper(TaskMapper.class)
-        );
+        TaskService taskService =
+                new TaskServiceImpl(
+                        taskRepository,
+                        statusRepository,
+                        userRepository,
+                        labelRepository,
+                        Mappers.getMapper(TaskMapper.class));
 
         TaskController controller = new TaskController(taskService);
 
         TaskStatus status = new TaskStatus();
         status.setSlug("new");
 
-        when(statusRepository.findBySlug("new"))
-                .thenReturn(Optional.of(status));
+        when(statusRepository.findBySlug("new")).thenReturn(Optional.of(status));
 
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -103,25 +91,21 @@ class TaskControllerTest {
 
     @Test
     void testShow() {
-        TaskRepository taskRepository =
-                Mockito.mock(TaskRepository.class);
+        TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
 
-        TaskStatusRepository statusRepository =
-                Mockito.mock(TaskStatusRepository.class);
+        TaskStatusRepository statusRepository = Mockito.mock(TaskStatusRepository.class);
 
-        UserRepository userRepository =
-                Mockito.mock(UserRepository.class);
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
 
-        LabelRepository labelRepository =
-                Mockito.mock(LabelRepository.class);
+        LabelRepository labelRepository = Mockito.mock(LabelRepository.class);
 
-        TaskService taskService = new TaskServiceImpl(
-                taskRepository,
-                statusRepository,
-                userRepository,
-                labelRepository,
-                Mappers.getMapper(TaskMapper.class)
-        );
+        TaskService taskService =
+                new TaskServiceImpl(
+                        taskRepository,
+                        statusRepository,
+                        userRepository,
+                        labelRepository,
+                        Mappers.getMapper(TaskMapper.class));
 
         TaskController controller = new TaskController(taskService);
 
@@ -133,8 +117,7 @@ class TaskControllerTest {
         task.setDescription("My description");
         task.setTaskStatus(status);
 
-        when(taskRepository.findById(1L))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         TaskResponseDTO result = controller.show(1L);
 
@@ -145,25 +128,21 @@ class TaskControllerTest {
 
     @Test
     void testUpdate() {
-        TaskRepository taskRepository =
-                Mockito.mock(TaskRepository.class);
+        TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
 
-        TaskStatusRepository statusRepository =
-                Mockito.mock(TaskStatusRepository.class);
+        TaskStatusRepository statusRepository = Mockito.mock(TaskStatusRepository.class);
 
-        UserRepository userRepository =
-                Mockito.mock(UserRepository.class);
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
 
-        LabelRepository labelRepository =
-                Mockito.mock(LabelRepository.class);
+        LabelRepository labelRepository = Mockito.mock(LabelRepository.class);
 
-        TaskService taskService = new TaskServiceImpl(
-                taskRepository,
-                statusRepository,
-                userRepository,
-                labelRepository,
-                Mappers.getMapper(TaskMapper.class)
-        );
+        TaskService taskService =
+                new TaskServiceImpl(
+                        taskRepository,
+                        statusRepository,
+                        userRepository,
+                        labelRepository,
+                        Mappers.getMapper(TaskMapper.class));
 
         TaskController controller = new TaskController(taskService);
 
@@ -175,8 +154,7 @@ class TaskControllerTest {
         task.setDescription("Old description");
         task.setTaskStatus(status);
 
-        when(taskRepository.findById(1L))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -193,32 +171,27 @@ class TaskControllerTest {
 
     @Test
     void testDelete() {
-        TaskRepository taskRepository =
-                Mockito.mock(TaskRepository.class);
+        TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
 
-        TaskStatusRepository statusRepository =
-                Mockito.mock(TaskStatusRepository.class);
+        TaskStatusRepository statusRepository = Mockito.mock(TaskStatusRepository.class);
 
-        UserRepository userRepository =
-                Mockito.mock(UserRepository.class);
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
 
-        LabelRepository labelRepository =
-                Mockito.mock(LabelRepository.class);
+        LabelRepository labelRepository = Mockito.mock(LabelRepository.class);
 
-        TaskService taskService = new TaskServiceImpl(
-                taskRepository,
-                statusRepository,
-                userRepository,
-                labelRepository,
-                Mappers.getMapper(TaskMapper.class)
-        );
+        TaskService taskService =
+                new TaskServiceImpl(
+                        taskRepository,
+                        statusRepository,
+                        userRepository,
+                        labelRepository,
+                        Mappers.getMapper(TaskMapper.class));
 
         TaskController controller = new TaskController(taskService);
 
         Task task = new Task();
 
-        when(taskRepository.findById(1L))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         controller.delete(1L);
 

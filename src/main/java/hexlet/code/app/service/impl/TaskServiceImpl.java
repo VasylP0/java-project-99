@@ -14,15 +14,13 @@ import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.TaskService;
 import hexlet.code.app.specification.TaskSpecification;
-
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -49,44 +47,34 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponseDTO> findAll(
-            String titleCont,
-            Long assigneeId,
-            String status,
-            Long labelId) {
+            String titleCont, Long assigneeId, String status, Long labelId) {
 
-        Specification<Task> spec =
-                (root, query, cb) -> cb.conjunction();
+        Specification<Task> spec = (root, query, cb) -> cb.conjunction();
 
         if (titleCont != null) {
-            spec = spec.and(
-                    TaskSpecification.titleContains(titleCont));
+            spec = spec.and(TaskSpecification.titleContains(titleCont));
         }
 
         if (assigneeId != null) {
-            spec = spec.and(
-                    TaskSpecification.hasAssignee(assigneeId));
+            spec = spec.and(TaskSpecification.hasAssignee(assigneeId));
         }
 
         if (status != null) {
-            spec = spec.and(
-                    TaskSpecification.hasStatus(status));
+            spec = spec.and(TaskSpecification.hasStatus(status));
         }
 
         if (labelId != null) {
-            spec = spec.and(
-                    TaskSpecification.hasLabel(labelId));
+            spec = spec.and(TaskSpecification.hasLabel(labelId));
         }
 
-        return taskRepository.findAll(spec).stream()
-                .map(taskMapper::toDTO)
-                .toList();
+        return taskRepository.findAll(spec).stream().map(taskMapper::toDTO).toList();
     }
 
     private Task findEntityById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Task not found"));
+        return taskRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
     }
 
     @Override
@@ -102,8 +90,7 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskStatus(resolveStatus(dto.getStatus()));
 
         if (dto.getAssigneeId() != null) {
-            task.setAssignee(
-                    resolveAssignee(dto.getAssigneeId()));
+            task.setAssignee(resolveAssignee(dto.getAssigneeId()));
         }
 
         if (dto.getLabels() != null) {
@@ -121,13 +108,11 @@ public class TaskServiceImpl implements TaskService {
         taskMapper.update(dto, task);
 
         if (dto.getStatus() != null) {
-            task.setTaskStatus(
-                    resolveStatus(dto.getStatus()));
+            task.setTaskStatus(resolveStatus(dto.getStatus()));
         }
 
         if (dto.getAssigneeId() != null) {
-            task.setAssignee(
-                    resolveAssignee(dto.getAssigneeId()));
+            task.setAssignee(resolveAssignee(dto.getAssigneeId()));
         }
 
         if (dto.getLabels() != null) {
@@ -144,17 +129,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private TaskStatus resolveStatus(String slug) {
-        return taskStatusRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Invalid status"));
+        return taskStatusRepository
+                .findBySlug(slug)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status"));
     }
 
     private User resolveAssignee(Long assigneeId) {
-        return userRepository.findById(assigneeId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Invalid assignee"));
+        return userRepository
+                .findById(assigneeId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid assignee"));
     }
 
     private Set<Label> resolveLabels(Set<Long> labelIds) {
@@ -162,10 +147,13 @@ public class TaskServiceImpl implements TaskService {
         Set<Label> labels = new HashSet<>();
 
         for (Long labelId : labelIds) {
-            Label label = labelRepository.findById(labelId)
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST,
-                            "Invalid label ID: " + labelId));
+            Label label =
+                    labelRepository
+                            .findById(labelId)
+                            .orElseThrow(() ->
+                                    new ResponseStatusException(
+                                            HttpStatus.BAD_REQUEST,
+                                            "Invalid label ID: " + labelId));
 
             labels.add(label);
         }

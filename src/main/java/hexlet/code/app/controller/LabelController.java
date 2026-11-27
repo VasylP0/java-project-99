@@ -3,7 +3,6 @@ package hexlet.code.app.controller;
 import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.LabelUpdateDTO;
 import hexlet.code.app.dto.LabelResponseDTO;
-import hexlet.code.app.model.Label;
 import hexlet.code.app.service.LabelService;
 
 import jakarta.validation.Valid;
@@ -24,20 +23,9 @@ public class LabelController {
         this.labelService = labelService;
     }
 
-    private LabelResponseDTO toDTO(Label label) {
-        return new LabelResponseDTO(
-                label.getId(),
-                label.getName(),
-                label.getCreatedAt()
-        );
-    }
-
     @GetMapping
     public ResponseEntity<List<LabelResponseDTO>> index() {
-        List<LabelResponseDTO> labels = labelService.findAll()
-                .stream()
-                .map(this::toDTO)
-                .toList();
+        List<LabelResponseDTO> labels = labelService.findAll();
 
         return ResponseEntity.ok()
                 .header("X-Total-Count",
@@ -49,7 +37,7 @@ public class LabelController {
 
     @GetMapping("/{id}")
     public LabelResponseDTO show(@PathVariable Long id) {
-        return toDTO(labelService.findById(id));
+        return labelService.findById(id);
     }
 
     @PostMapping
@@ -57,10 +45,7 @@ public class LabelController {
     public LabelResponseDTO create(
             @Valid @RequestBody LabelCreateDTO data) {
 
-        Label label = new Label();
-        label.setName(data.getName());
-
-        return toDTO(labelService.create(label));
+        return labelService.create(data);
     }
 
     @PutMapping("/{id}")
@@ -68,10 +53,7 @@ public class LabelController {
             @PathVariable Long id,
             @Valid @RequestBody LabelUpdateDTO data) {
 
-        Label label = new Label();
-        label.setName(data.getName());
-
-        return toDTO(labelService.update(id, label));
+        return labelService.update(id, data);
     }
 
     @DeleteMapping("/{id}")

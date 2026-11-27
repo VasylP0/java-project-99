@@ -1,18 +1,20 @@
 package hexlet.code.app.service;
 
-import hexlet.code.app.model.Label;
+import hexlet.code.app.dto.LabelCreateDTO;
+import hexlet.code.app.dto.LabelResponseDTO;
+import hexlet.code.app.dto.LabelUpdateDTO;
 
 import java.util.List;
 
 public interface LabelService {
 
-    List<Label> findAll();
+    List<LabelResponseDTO> findAll();
 
-    Label findById(Long id);
+    LabelResponseDTO findById(Long id);
 
-    Label create(Label label);
+    LabelResponseDTO create(LabelCreateDTO data);
 
-    Label update(Long id, Label updatedLabel);
+    LabelResponseDTO update(Long id, LabelUpdateDTO data);
 
     void delete(Long id);
 }

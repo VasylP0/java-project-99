@@ -32,10 +32,7 @@ public class TaskController {
             @RequestParam(required = false) Long labelId) {
 
         List<TaskResponseDTO> tasks = taskService
-                .findAll(titleCont, assigneeId, status, labelId)
-                .stream()
-                .map(TaskResponseDTO::new)
-                .toList();
+                .findAll(titleCont, assigneeId, status, labelId);
 
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(tasks.size()))
@@ -46,7 +43,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskResponseDTO show(@PathVariable Long id) {
-        return new TaskResponseDTO(taskService.findById(id));
+        return taskService.findById(id);
     }
 
     @PostMapping
@@ -54,7 +51,7 @@ public class TaskController {
     public TaskResponseDTO create(
             @Valid @RequestBody TaskCreateDTO dto) {
 
-        return new TaskResponseDTO(taskService.create(dto));
+        return taskService.create(dto);
     }
 
     @PutMapping("/{id}")
@@ -62,7 +59,7 @@ public class TaskController {
             @PathVariable Long id,
             @RequestBody TaskUpdateDTO dto) {
 
-        return new TaskResponseDTO(taskService.update(id, dto));
+        return taskService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

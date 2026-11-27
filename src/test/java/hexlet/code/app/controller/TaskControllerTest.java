@@ -5,6 +5,8 @@ import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
 import hexlet.code.app.model.Task;
+import hexlet.code.app.mapper.TaskMapper;
+import org.mapstruct.factory.Mappers;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
@@ -44,7 +46,8 @@ class TaskControllerTest {
                 taskRepository,
                 statusRepository,
                 userRepository,
-                labelRepository
+                labelRepository,
+                Mappers.getMapper(TaskMapper.class)
         );
 
         TaskController controller = new TaskController(taskService);
@@ -71,7 +74,8 @@ class TaskControllerTest {
                 taskRepository,
                 statusRepository,
                 userRepository,
-                labelRepository
+                labelRepository,
+                Mappers.getMapper(TaskMapper.class)
         );
 
         TaskController controller = new TaskController(taskService);
@@ -115,7 +119,8 @@ class TaskControllerTest {
                 taskRepository,
                 statusRepository,
                 userRepository,
-                labelRepository
+                labelRepository,
+                Mappers.getMapper(TaskMapper.class)
         );
 
         TaskController controller = new TaskController(taskService);
@@ -156,7 +161,8 @@ class TaskControllerTest {
                 taskRepository,
                 statusRepository,
                 userRepository,
-                labelRepository
+                labelRepository,
+                Mappers.getMapper(TaskMapper.class)
         );
 
         TaskController controller = new TaskController(taskService);
@@ -203,7 +209,8 @@ class TaskControllerTest {
                 taskRepository,
                 statusRepository,
                 userRepository,
-                labelRepository
+                labelRepository,
+                Mappers.getMapper(TaskMapper.class)
         );
 
         TaskController controller = new TaskController(taskService);

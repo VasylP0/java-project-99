@@ -1,7 +1,9 @@
 package hexlet.code.app.service.impl;
 
 import hexlet.code.app.dto.TaskCreateDTO;
+import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.mapper.TaskMapper;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.model.TaskStatus;
@@ -29,21 +31,24 @@ public class TaskServiceImpl implements TaskService {
     private final TaskStatusRepository taskStatusRepository;
     private final UserRepository userRepository;
     private final LabelRepository labelRepository;
+    private final TaskMapper taskMapper;
 
     public TaskServiceImpl(
             TaskRepository taskRepository,
             TaskStatusRepository taskStatusRepository,
             UserRepository userRepository,
-            LabelRepository labelRepository) {
+            LabelRepository labelRepository,
+            TaskMapper taskMapper) {
 
         this.taskRepository = taskRepository;
         this.taskStatusRepository = taskStatusRepository;
         this.userRepository = userRepository;
         this.labelRepository = labelRepository;
+        this.taskMapper = taskMapper;
     }
 
     @Override
-    public List<Task> findAll(
+    public List<TaskResponseDTO> findAll(
             String titleCont,
             Long assigneeId,
             String status,
@@ -72,11 +77,12 @@ public class TaskServiceImpl implements TaskService {
                     TaskSpecification.hasLabel(labelId));
         }
 
-        return taskRepository.findAll(spec);
+        return taskRepository.findAll(spec).stream()
+                .map(taskMapper::toDTO)
+                .toList();
     }
 
-    @Override
-    public Task findById(Long id) {
+    private Task findEntityById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -84,13 +90,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task create(TaskCreateDTO dto) {
+    public TaskResponseDTO findById(Long id) {
+        return taskMapper.toDTO(findEntityById(id));
+    }
 
-        Task task = new Task();
+    @Override
+    public TaskResponseDTO create(TaskCreateDTO dto) {
 
-        task.setName(dto.getTitle());
-        task.setIndex(dto.getIndex());
-        task.setDescription(dto.getContent());
+        Task task = taskMapper.toEntity(dto);
+
         task.setTaskStatus(resolveStatus(dto.getStatus()));
 
         if (dto.getAssigneeId() != null) {
@@ -102,25 +110,15 @@ public class TaskServiceImpl implements TaskService {
             task.setLabels(resolveLabels(dto.getLabels()));
         }
 
-        return taskRepository.save(task);
+        return taskMapper.toDTO(taskRepository.save(task));
     }
 
     @Override
-    public Task update(Long id, TaskUpdateDTO dto) {
+    public TaskResponseDTO update(Long id, TaskUpdateDTO dto) {
 
-        Task task = findById(id);
+        Task task = findEntityById(id);
 
-        if (dto.getTitle() != null) {
-            task.setName(dto.getTitle());
-        }
-
-        if (dto.getIndex() != null) {
-            task.setIndex(dto.getIndex());
-        }
-
-        if (dto.getContent() != null) {
-            task.setDescription(dto.getContent());
-        }
+        taskMapper.update(dto, task);
 
         if (dto.getStatus() != null) {
             task.setTaskStatus(
@@ -136,12 +134,12 @@ public class TaskServiceImpl implements TaskService {
             task.setLabels(resolveLabels(dto.getLabels()));
         }
 
-        return taskRepository.save(task);
+        return taskMapper.toDTO(taskRepository.save(task));
     }
 
     @Override
     public void delete(Long id) {
-        Task task = findById(id);
+        Task task = findEntityById(id);
         taskRepository.delete(task);
     }
 

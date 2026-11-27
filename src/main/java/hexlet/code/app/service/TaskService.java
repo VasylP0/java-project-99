@@ -1,24 +1,24 @@
 package hexlet.code.app.service;
 
 import hexlet.code.app.dto.TaskCreateDTO;
+import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
-import hexlet.code.app.model.Task;
 
 import java.util.List;
 
 public interface TaskService {
 
-    List<Task> findAll(
+    List<TaskResponseDTO> findAll(
             String titleCont,
             Long assigneeId,
             String status,
             Long labelId);
 
-    Task findById(Long id);
+    TaskResponseDTO findById(Long id);
 
-    Task create(TaskCreateDTO dto);
+    TaskResponseDTO create(TaskCreateDTO dto);
 
-    Task update(Long id, TaskUpdateDTO dto);
+    TaskResponseDTO update(Long id, TaskUpdateDTO dto);
 
     void delete(Long id);
 }

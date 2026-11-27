@@ -1,15 +1,9 @@
-
 package hexlet.code.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import hexlet.code.app.model.Task;
 
 import java.time.LocalDateTime;
-
-import hexlet.code.app.model.Label;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 
 public class TaskResponseDTO {
 
@@ -23,27 +17,26 @@ public class TaskResponseDTO {
     private String title;
     private String content;
     private String status;
-
     private Set<Long> labels;
 
+    public TaskResponseDTO(
+            Long id,
+            Integer index,
+            LocalDateTime createdAt,
+            Long assigneeId,
+            String title,
+            String content,
+            String status,
+            Set<Long> labels) {
 
-    public TaskResponseDTO(Task task) {
-        this.id = task.getId();
-        this.index = task.getIndex();
-        this.createdAt = task.getCreatedAt();
-
-        this.assigneeId = task.getAssignee() == null
-                ? null : task.getAssignee().getId();
-
-        this.title = task.getName();
-        this.content = task.getDescription();
-        this.status = task.getTaskStatus().getSlug();
-
-        this.labels = task.getLabels()
-                .stream()
-                .map(Label::getId)
-                .collect(Collectors.toSet());
-
+        this.id = id;
+        this.index = index;
+        this.createdAt = createdAt;
+        this.assigneeId = assigneeId;
+        this.title = title;
+        this.content = content;
+        this.status = status;
+        this.labels = labels;
     }
 
     public Long getId() {
@@ -77,5 +70,4 @@ public class TaskResponseDTO {
     public Set<Long> getLabels() {
         return labels;
     }
-
 }

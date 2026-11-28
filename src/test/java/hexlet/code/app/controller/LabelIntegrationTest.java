@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.support.TestDatabaseCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +13,15 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 class LabelIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
+
+    @Autowired private TestDatabaseCleaner databaseCleaner;
 
     @Autowired private LabelRepository labelRepository;
 
@@ -28,6 +29,8 @@ class LabelIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        databaseCleaner.reset();
+
         adminToken =
                 mockMvc.perform(
                                 post("/api/login")

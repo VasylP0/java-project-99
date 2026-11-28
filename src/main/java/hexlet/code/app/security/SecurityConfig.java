@@ -1,5 +1,6 @@
 package hexlet.code.app.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -23,8 +25,16 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpStatus.UNAUTHORIZED.value())))
+                        exceptions
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    log.warn("Unauthenticated request");
+                                    response.sendError(
+                                            HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+                                })
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    log.warn("Access denied");
+                                    response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden");
+                                }))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->

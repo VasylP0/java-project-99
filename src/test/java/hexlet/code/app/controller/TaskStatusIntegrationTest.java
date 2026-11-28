@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import hexlet.code.app.repository.TaskStatusRepository;
-import jakarta.persistence.EntityManager;
+import hexlet.code.app.support.TestDatabaseCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,24 +13,24 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 class TaskStatusIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
 
     @Autowired private TaskStatusRepository taskStatusRepository;
 
-    @Autowired private EntityManager entityManager;
+    @Autowired private TestDatabaseCleaner databaseCleaner;
 
     private String adminToken;
 
     @BeforeEach
     void setUp() throws Exception {
+        databaseCleaner.reset();
+
         adminToken =
                 mockMvc.perform(
                                 post("/api/login")
@@ -218,9 +218,6 @@ class TaskStatusIntegrationTest {
                                         }
                                         """))
                 .andExpect(status().isCreated());
-
-        entityManager.flush();
-        entityManager.clear();
 
         mockMvc.perform(
                         delete("/api/task_statuses/{id}", id)

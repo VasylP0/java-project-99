@@ -4,10 +4,9 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.security.JwtService;
 import hexlet.code.app.service.AuthService;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -30,11 +29,11 @@ public class AuthServiceImpl implements AuthService {
         User user =
                 userRepository
                         .findByEmail(username)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+                        .orElseThrow(() -> new BadCredentialsException("Unauthorized"));
 
         if (password == null || !passwordEncoder.matches(password, user.getPassword())) {
 
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new BadCredentialsException("Unauthorized");
         }
 
         return jwtService.generateToken(user.getEmail());

@@ -3,6 +3,7 @@ package hexlet.code.app.service.impl;
 import hexlet.code.app.dto.UserCreateDTO;
 import hexlet.code.app.dto.UserResponseDTO;
 import hexlet.code.app.dto.UserUpdateDTO;
+import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.UserMapper;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
@@ -36,8 +37,7 @@ public class UserServiceImpl implements UserService {
     private User findEntityById(Long id) {
         return userRepository
                 .findById(id)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override

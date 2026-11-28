@@ -3,14 +3,13 @@ package hexlet.code.app.service.impl;
 import hexlet.code.app.dto.LabelCreateDTO;
 import hexlet.code.app.dto.LabelResponseDTO;
 import hexlet.code.app.dto.LabelUpdateDTO;
+import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.LabelMapper;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.service.LabelService;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class LabelServiceImpl implements LabelService {
@@ -27,8 +26,7 @@ public class LabelServiceImpl implements LabelService {
     private Label findEntityById(Long id) {
         return labelRepository
                 .findById(id)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Label not found"));
     }
 
     @Override

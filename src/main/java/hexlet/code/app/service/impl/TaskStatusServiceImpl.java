@@ -3,14 +3,13 @@ package hexlet.code.app.service.impl;
 import hexlet.code.app.dto.TaskStatusCreateDTO;
 import hexlet.code.app.dto.TaskStatusResponseDTO;
 import hexlet.code.app.dto.TaskStatusUpdateDTO;
+import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.TaskStatusMapper;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.service.TaskStatusService;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TaskStatusServiceImpl implements TaskStatusService {
@@ -33,8 +32,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     private TaskStatus findEntityById(Long id) {
         return taskStatusRepository
                 .findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Task status not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task status not found"));
     }
 
     @Override

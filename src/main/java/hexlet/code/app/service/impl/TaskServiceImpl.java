@@ -3,6 +3,8 @@ package hexlet.code.app.service.impl;
 import hexlet.code.app.dto.TaskCreateDTO;
 import hexlet.code.app.dto.TaskResponseDTO;
 import hexlet.code.app.dto.TaskUpdateDTO;
+import hexlet.code.app.exception.InvalidRequestException;
+import hexlet.code.app.exception.ResourceNotFoundException;
 import hexlet.code.app.mapper.TaskMapper;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
@@ -18,9 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -73,8 +73,7 @@ public class TaskServiceImpl implements TaskService {
     private Task findEntityById(Long id) {
         return taskRepository
                 .findById(id)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 
     @Override
@@ -131,15 +130,13 @@ public class TaskServiceImpl implements TaskService {
     private TaskStatus resolveStatus(String slug) {
         return taskStatusRepository
                 .findBySlug(slug)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status"));
+                .orElseThrow(() -> new InvalidRequestException("Invalid status"));
     }
 
     private User resolveAssignee(Long assigneeId) {
         return userRepository
                 .findById(assigneeId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid assignee"));
+                .orElseThrow(() -> new InvalidRequestException("Invalid assignee"));
     }
 
     private Set<Label> resolveLabels(Set<Long> labelIds) {
@@ -147,7 +144,7 @@ public class TaskServiceImpl implements TaskService {
         Set<Label> labels = new HashSet<>(labelRepository.findAllById(labelIds));
 
         if (labels.size() != labelIds.size()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid label IDs");
+            throw new InvalidRequestException("Invalid label IDs");
         }
 
         return labels;

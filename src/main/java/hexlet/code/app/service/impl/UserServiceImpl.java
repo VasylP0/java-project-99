@@ -9,8 +9,6 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.UserService;
 import java.util.List;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,13 +56,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO update(Long id, UserUpdateDTO dto, String currentUserEmail) {
+    public UserResponseDTO update(Long id, UserUpdateDTO dto) {
 
         User user = findEntityById(id);
-
-        if (!user.getEmail().equals(currentUserEmail)) {
-            throw new AccessDeniedException("Forbidden");
-        }
 
         userMapper.update(dto, user);
 
@@ -72,18 +66,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO delete(Long id, String currentUserEmail) {
+    public UserResponseDTO delete(Long id) {
 
         User user = findEntityById(id);
-
-        User currentUser =
-                userRepository
-                        .findByEmail(currentUserEmail)
-                        .orElseThrow(() -> new BadCredentialsException("Unauthorized"));
-
-        if (!currentUser.isAdmin() && !user.getEmail().equals(currentUserEmail)) {
-            throw new AccessDeniedException("Forbidden");
-        }
 
         UserResponseDTO response = userMapper.toDTO(user);
 

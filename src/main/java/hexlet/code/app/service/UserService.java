@@ -13,7 +13,7 @@ public interface UserService {
 
     UserResponseDTO create(UserCreateDTO dto);
 
-    UserResponseDTO update(Long id, UserUpdateDTO dto, String currentUserEmail);
+    UserResponseDTO update(Long id, UserUpdateDTO dto);
 
-    UserResponseDTO delete(Long id, String currentUserEmail);
+    UserResponseDTO delete(Long id);
 }

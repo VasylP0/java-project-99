@@ -7,7 +7,6 @@ import hexlet.code.app.service.UserService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,16 +41,15 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("@userAuthorization.isOwner(#id, authentication.name)")
-    public UserResponseDTO update(
-            @PathVariable Long id, @RequestBody UserUpdateDTO dto, Authentication authentication) {
+    public UserResponseDTO update(@PathVariable Long id, @RequestBody UserUpdateDTO dto) {
 
-        return userService.update(id, dto, authentication.getName());
+        return userService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @userAuthorization.isOwner(#id, authentication.name)")
-    public UserResponseDTO delete(@PathVariable Long id, Authentication authentication) {
+    public UserResponseDTO delete(@PathVariable Long id) {
 
-        return userService.delete(id, authentication.getName());
+        return userService.delete(id);
     }
 }

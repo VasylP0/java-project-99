@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.repository.UserRepository;
-import jakarta.persistence.EntityManager;
+import hexlet.code.app.support.TestDatabaseCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 class TaskIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
@@ -33,7 +31,7 @@ class TaskIntegrationTest {
 
     @Autowired private LabelRepository labelRepository;
 
-    @Autowired private EntityManager entityManager;
+    @Autowired private TestDatabaseCleaner databaseCleaner;
 
     private String adminToken;
     private Long adminId;
@@ -42,6 +40,8 @@ class TaskIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        databaseCleaner.reset();
+
         adminToken =
                 mockMvc.perform(
                                 post("/api/login")
@@ -75,11 +75,6 @@ class TaskIntegrationTest {
                         .getId();
     }
 
-    private void flushAndClear() {
-        entityManager.flush();
-        entityManager.clear();
-    }
-
     private Long createTestTask() throws Exception {
         mockMvc.perform(
                         post("/api/tasks")
@@ -106,8 +101,6 @@ class TaskIntegrationTest {
                 .andExpect(jsonPath("$.assignee_id").value(adminId.intValue()))
                 .andExpect(jsonPath("$.labels", hasSize(2)))
                 .andExpect(jsonPath("$.labels", hasItems(featureId.intValue(), bugsId.intValue())));
-
-        flushAndClear();
 
         return taskRepository.findAll().stream()
                 .filter(task -> "Integration Task".equals(task.getName()))
@@ -183,8 +176,6 @@ class TaskIntegrationTest {
                 .andExpect(jsonPath("$.assignee_id").value(adminId.intValue()))
                 .andExpect(jsonPath("$.labels", hasSize(2)));
 
-        flushAndClear();
-
         mockMvc.perform(get("/api/tasks/{id}", id).header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Integration Task"))
@@ -208,8 +199,6 @@ class TaskIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.labels", hasSize(0)));
 
-        flushAndClear();
-
         mockMvc.perform(get("/api/tasks/{id}", id).header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.labels", hasSize(0)));
@@ -223,8 +212,6 @@ class TaskIntegrationTest {
                         delete("/api/tasks/{id}", id)
                                 .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isNoContent());
-
-        flushAndClear();
 
         mockMvc.perform(get("/api/tasks/{id}", id).header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isNotFound());
@@ -295,8 +282,6 @@ class TaskIntegrationTest {
                                         }
                                         """))
                 .andExpect(status().isCreated());
-
-        flushAndClear();
 
         mockMvc.perform(
                         get("/api/tasks")
